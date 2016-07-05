@@ -28,15 +28,17 @@
 
   <ul ng-repeat="todo in todos | filter:statusFilter" class="list-unstyled">
     <li class="todo-item">
-      <div class="input-group">
-        <span class="input-group-addon">
-          <input type="checkbox" aria-label="..." ng-model="todo.completed">
-        </span>
-        <input type="text" class="form-control" aria-label="..." ng-model="todo.title">
-        <div class="input-group-btn">
-          <button class="btn btn-danger" ng-click="remove(todo.id)">Remove</button>
-        </div>
-      </div>
+      <!--<div class="input-group">-->
+        <!--<span class="input-group-addon">-->
+          <!--<input type="checkbox" aria-label="..." ng-model="todo.completed">-->
+        <!--</span>-->
+        <!--<input type="text" class="form-control" aria-label="..." ng-model="todo.title">-->
+        <!--<div class="input-group-btn">-->
+          <!--<button class="btn btn-danger" ng-click="remove(todo.id)">Remove</button>-->
+        <!--</div>-->
+      <!--</div>-->
+
+      <todo-item todo="todo" remove="remove(todo.id)"></todo-item>
     </li>
   </ul>
   <div class="btn-group" role="group" aria-label="...">
@@ -61,6 +63,7 @@
 <script src="node_modules/angular/angular.js"></script>
 <script src="js/app.js"></script>
 <script src="js/controllers/TodomvcCtrl.js"></script>
+<script src="js/directives/todoItem.js"></script>
 
 </body>
 </html>
