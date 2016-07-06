@@ -1,46 +1,83 @@
 angular.module('todomvc')
-    .factory('todomvcStorage', function () {
+    .factory('TodomvcStorage', function ($http, $q) {
 
         var storage = {
-            todos: [{
-                id: 1,
-                title: '요가 수행하기',
-                completed: false
-            }, {
-                id: 2,
-                title: '어머니 용돈 드리기',
-                completed: true
-            }],
+            todos: [],
 
             get: function () {
-                return storage.todos;
+                var deferred = $q.defer();
+                $http.get('/api/todos')
+                    .then(function success(response) {
+                        console.log(response.data);
+                        deferred.resolve(angular.copy(response.data, storage.todos));
+                    }, function error(err) {
+                        console.error(err);
+                        deferred.reject(err);
+                    });
+                return deferred.promise;
             },
 
-            post: function (todoTitle) {
-                var newId = !storage.todos.length ?
-                    1 : storage.todos[storage.todos.length - 1].id + 1;
-                var newTodo = {
-                    id: newId,
-                    title: todoTitle,
-                    completed: false
-                };
-                storage.todos.push(newTodo);
-            },
-
-            delete: function (id) {
-                var deleltedTodoIdx = storage.todos.findIndex(function (todo) {
-                    return todo.id === id;
+            post: function (todo) {
+                var deferred = $q.defer();
+                $http.post('/api/todos', {
+                    title: todo.title
+                }).then(function success(response) {
+                    deferred.resolve(response.data);
+                }, function (err) {
+                    console.error(err);
+                    deferred.reject(err);
                 });
-                if (deleltedTodoIdx === -1) return;
-                storage.todos.splice(deleltedTodoIdx, 1);
+                return deferred.promise;
+            },
+
+            delete: function (todo) {
+                if (!todo) return;
+
+                var deferred = $q.defer();
+                $http.delete('/api/todos/' + todo.id)
+                    .then(function successs(response) {
+                        storage.todos.splice(storage.todos.indexOf(todo), 1);
+                    }, function error(err) {
+                        console.error(err);
+                    });
+                return deferred.promise;
+            },
+
+            update: function (todo) {
+                if (!todo) return;
+
+                var deferred = $q.defer();
+                $http.put('/api/todos/' + todo.id, todo)
+                    .then(function successs(response) {
+                        console.log(response);
+                    }, function error(err) {
+                        console.error(err);
+                    });
+                return deferred.promise;
             },
 
             deleteCompleted: function () {
-                var incompleteTodos = storage.todos.filter(function (todo) {
-                    return !todo.completed;
+                // Filter completed todo id list
+                var completedTodos = storage.todos.filter(function (todo) {
+                    return todo.completed;
                 });
-                angular.copy(incompleteTodos, storage.todos);
+                var completedTodoIds = completedTodos.map(function (todo) {
+                    return todo.id;
+                });
+                console.log(completedTodoIds);
+
+                $http.delete('/api/todos/' + completedTodoIds.join(','))
+                    .then(function success (response) {
+                        var incompleteTodos = storage.todos.filter(function (todo) {
+                            return !todo.completed;
+                        });
+
+                        angular.copy(incompleteTodos, storage.todos);
+                    }, function (error) {
+
+                    })
             }
+
         };
 
         return storage;

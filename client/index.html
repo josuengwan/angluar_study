@@ -10,7 +10,9 @@
 </head>
 <body ng-app="todomvc">
 <div ng-controller="TodomvcCtrl" class="container">
-  <h1>Todos</h1>
+  <h1>Todos
+    <small> {{status}}</small>
+  </h1>
 
   <ul class="list-unstyled">
     <li>
@@ -26,21 +28,12 @@
     </li>
   </ul>
 
-  <ul ng-repeat="todo in todos | filter:statusFilter" class="list-unstyled">
+  <ul ng-repeat="todo in todos | filter:statusFilter track by $index" class="list-unstyled">
     <li class="todo-item">
-      <!--<div class="input-group">-->
-        <!--<span class="input-group-addon">-->
-          <!--<input type="checkbox" aria-label="..." ng-model="todo.completed">-->
-        <!--</span>-->
-        <!--<input type="text" class="form-control" aria-label="..." ng-model="todo.title">-->
-        <!--<div class="input-group-btn">-->
-          <!--<button class="btn btn-danger" ng-click="remove(todo.id)">Remove</button>-->
-        <!--</div>-->
-      <!--</div>-->
-
-      <todo-item todo="todo" remove="remove(todo.id)"></todo-item>
+      <todo-item todo="todo" remove="remove(todo)" update="update(todo)"></todo-item>
     </li>
   </ul>
+
   <div class="btn-group" role="group" aria-label="...">
     <button type="button" class="btn btn-default" ng-click="status='completed'">
       Completed
@@ -54,18 +47,14 @@
       Clear Completed
     </button>
   </div>
-  <todo-status></todo-status>
-  <pre>{{todos | json}}</pre>
 
 </div>
-
-
 
 <script src="node_modules/angular/angular.js"></script>
 <script src="js/app.js"></script>
 <script src="js/controllers/TodomvcCtrl.js"></script>
 <script src="js/services/todoStorage.js"></script>
 <script src="js/directives/todoItem.js"></script>
-<script src="js/directives/todoStatus.js"></script>
+
 </body>
 </html>
